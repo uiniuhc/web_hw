@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>home work 6</title>
+        <style>
+            form {width:380px;margin:auto;}
+            #queryTable{width:330px;border:1px solid black;}
+            input{padding:5px;}
+        </style>
+        <script>
+            function validateForm(){
+                var sel=document.getElementById("congDB");
+                var cong=sel.options[sel.selectedIndex].value;
+                var keyword=document.getElementById("text_query").value;
+                if(cong!="" && keyword!=""){
+                    return true;
+                }
+                else{
+                    var notice="Please enter the following missing infomation: ";
+                    if(cong=="" && keyword==""){notice+="Congress database, keyword";}
+                    else if(cong==""){notice+="Congress database";}
+                    else{
+                        notice+="keyword";
+                    }
+                    alert(notice);
+                }
+                return false;
+            }
+            function resetKeywordLabel(){
+                document.getElementById("keyword_label").firstChild.nodeValue="Keyword*";
+                document.getElementById("query_result").innerHTML="";
+                return true;
+            }
+            function setKeywordLabel(){
+                var sel=document.getElementById("congDB");
+                var cong=sel.options[sel.selectedIndex].value;
+                
+                var label=document.getElementById("keyword_label").firstChild;
+                switch(sel.selectedIndex){
+                    case 0:label.nodeValue="Keyword*";break;
+                    case 1:label.nodeValue="State/Representative*";break;
+                    case 2:label.nodeValue="Committee ID*";break;
+                    case 3:label.nodeValue="Bill ID*";break;
+                    case 4:label.nodeValue="Amendment ID*";break;
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div name="divQuery">
+       
+        <form name="searchForm" method="post" action="" onsubmit="return validateForm()" onreset="return resetKeywordLabel()">
+            <h2>Congress Information Search</h2>
+            <div id="queryTable">
+            <table style="margin:0px;">
+            <tr>
+                <td>Congress Database</td>
+                <td>
+                <select id="congDB" name="selCongDB" onchange="setKeywordLabel();" >
+                <option value="" disabled selected>Select your option</option>
+                <option value="Legislators">Legislators</option>
+                <option value="Committees">Committees</option>
+                <option value="Bills">Bills</option>
+                <option value="Amendments">Amendments</option>
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Chamber</td>
+                <td>
+                <input type="radio" value="Senate" name="cham" id="radio_senate" checked/>
+                <label for="radio_senate">Senate</label>
+                <input type="radio" value="House" name="cham" id="radio_house"/>
+                <label for="radio_house">House</label>
+                </td>
+            </tr>
+            <tr>
+                <td id="keyword_label">Keyword*</td>
+                <td><input type="text" id="text_query" name="keyword" size=25 placeholder="please input the keyword" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                <input type="submit" value="Search">
+                <input type="reset" value="Clear" >
+                </td>
+            </tr>
+            
+            
+            </table>
+            <p style="padding:0px 30px 0px 60px;margin:5px 0px 10px;"><a href="http://sunlightfoundation.com/" target="_blank">Powered By Sunlight Foundation</a>
+            </p>
+            </div>
+        </form>
+        </div>
+        <div id="query_result"><div>asdfasdfsadfasdfds
+            </div>
+        </div>
+    </body>
+</html>

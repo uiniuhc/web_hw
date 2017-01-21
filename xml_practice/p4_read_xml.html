@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>hw4</title>
+<script>
+    function badXML(str){
+        window.alert("Error in XML file: "+str);
+    }
+    /**
+    learned from https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
+    */
+    function is_all_ws( nod )
+    {
+        return !(/[^\t\n\r ]/.test(nod.textContent));
+    }
+    function is_ignorable( nod )
+    {
+        return ( nod.nodeType == 8) || // A comment node
+            ( (nod.nodeType == 3) && is_all_ws(nod) ); // a text node, all ws
+    }
+    function first_child( par )
+    {
+        var res=par.firstChild;
+        while (res) {
+            if (!is_ignorable(res)) return res;
+            res = res.nextSibling;
+        }
+        return null;
+    }
+    function node_after( sib )
+    {
+        while ((sib = sib.nextSibling)) {
+        if (!is_ignorable(sib)) return sib;
+        }
+        return null;
+    }
+
+    function parser(){
+        
+        var str_url=document.getElementById("xmlurl").value;
+        if(str_url.length==0){
+            window.alert("please give a url!");
+            return;
+        }
+        var xmlDoc=getDoc(str_url);
+        if(xmlDoc==null)return;
+        //window.alert("nodename: "+xmlDoc.documentElement.nodeName);
+        if(xmlDoc.documentElement.nodeName=="parsererror"){
+            badXML("Parser Error");
+            return;
+        }
+        //here we start parsing the xml
+        //parse valid
+        if(xmlDoc.getElementsByTagName("Header").length!=1){
+            badXML("Only one header is supported!");
+            return;   
+        }
+        if(xmlDoc.getElementsByTagName("Header")[0].getElementsByTagName("Data").length!=5){
+            badXML("There should be only 5 Data elements in the Header!")
+        }
+        if(xmlDoc.getElementsByTagName("Row").length==0){
+            badXML("There is no entry!");
+            return;   
+        }
+        
+        var rows=xmlDoc.getElementsByTagName("Row");
+        //validate!
+        //no need of the content validation, and I will show them all in N.A.
+        /*
+        for(i=0;i<rows.length;i++){
+            var prow=rows[i];
+            var slot=first_child(prow);
+            var newspaper=node_after(slot);
+            var location=node_after(newspaper);
+            var homepage=node_after(location);
+            var logo=node_after(homepage);
+            /*
+            document.getElementById("demo").innerHTML=slot.nodeName+" "+newspaper.nodeName+" "+location.nodeName+" "+homepage.nodeName+" "+logo.nodeName+"<br>"
+                +first_child(location).nodeName+"<br>"+xmlDoc.getElementsByTagName("Header")[0].getElementsByTagName("Data").length+" "
+                +first_child(xmlDoc.getElementsByTagName("Header")[0].getElementsByTagName("Data")[0]).nodeValue;*/
+        /*    if(rows[i].getElementsByTagName("Newspaper").length==0 ||
+               first_child(newspaper)==null){
+               window.alert("Missing Newspaper Title! We will show it in 'N.A.'"); 
+               //return;
+            }    
+        }*/
+        
+        //make the new page
+        var w=window.open();
+        var tb=w.document.createElement("TABLE");
+        //css part, I learned from this page http://stackoverflow.com/questions/524696/how-to-create-a-style-tag-with-javascript
+        var whead=w.document.head || document.getElementsByTagName("head")[0];
+        var style=w.document.createElement("style");
+        var css='table,td,th{border:3px ridge gray; border-collapse: collapse;} html{overflow-y:scroll;}'
+        style.type="text/css";
+        if(style.styleSheets){
+            style.styleSheets.cssText=css;
+        }else{
+            style.appendChild(w.document.createTextNode(css));
+        }
+        whead.appendChild(style);
+        
+        //make header
+        var trh=w.document.createElement("TR");
+        var headerElement=xmlDoc.getElementsByTagName("Header")[0].getElementsByTagName("Data");
+        var valid_head=["Top Slot","Newspaper","Location","HomePage","Logo"];
+        var head_error=false;
+        for(i=0;i<headerElement.length;i++){
+            var textHead=first_child(headerElement[i]).nodeValue;
+            if(textHead!=valid_head[i])head_error=true;
+            var th=w.document.createElement("TH");
+            th.appendChild(w.document.createTextNode(textHead));
+            trh.appendChild(th);
+        }
+        if(head_error)badXML("Different Header detected");
+        tb.appendChild(trh);
+        //add rows
+        //console.log("hello!");
+        for(i=0;i<rows.length;i++){
+            var trr=w.document.createElement("TR");
+            var prow=rows[i];
+            var pnode=first_child(prow);
+            while(pnode!=null){
+                var td1=w.document.createElement("TD");
+                var text="";
+                if(first_child(pnode)!=null)text=first_child(pnode).nodeValue;
+                
+                if(text==""){text="N.A.";}
+                if(pnode.nodeName=="Location"){
+                    //handle with location
+                    var city=pnode.getElementsByTagName("City");
+                    var state=pnode.getElementsByTagName("State");
+                    var changed=false;
+                    if(city.length==0 && state.length==0){
+                        td1.appendChild(w.document.createTextNode(text));
+                    }else{
+                        var ul=w.document.createElement("ul");
+                        if(city.length!=0 && first_child(city[0])!=null && first_child(city[0]).nodeValue!=""){
+                            var li1=w.document.createElement("li");
+                            li1.appendChild(w.document.createTextNode(first_child(city[0]).nodeValue));
+                            ul.appendChild(li1);
+                            changed=true;
+                        }
+                        if(state.length!=0 && first_child(state[0])!=null && first_child(state[0]).nodeValue!=""){
+                            var li2=w.document.createElement("li");
+                            li2.appendChild(w.document.createTextNode(first_child(state[0]).nodeValue));
+                            ul.appendChild(li2);changed=true;
+                        }
+                        if(changed)
+                            td1.appendChild(ul);
+                        else
+                            td1.appendChild(w.document.createTextNode("N.A."));
+                    }
+                }else if(text!="N.A." && pnode.nodeName=="HomePage"){
+                    //handle with homepage
+                    var link_page=w.document.createElement("a");
+                    link_page.setAttribute("href",text);
+                    link_page.appendChild(w.document.createTextNode(text));
+                    td1.appendChild(link_page);
+                }else if(text!="N.A." && pnode.nodeName=="Logo"){
+                    //handle with logo
+                    var logo_img=w.document.createElement("img");
+                    logo_img.setAttribute("src",text);
+                    logo_img.setAttribute("alt","logo");
+                    logo_img.setAttribute("height","100px");
+                    td1.appendChild(logo_img);
+                }else{
+                    td1.appendChild(w.document.createTextNode(text));
+                }
+                trr.appendChild(td1);
+                pnode=node_after(pnode);
+            }
+            tb.appendChild(trr);
+        }
+        w.document.body.appendChild(tb);
+    }
+    function getDoc(url){
+        //var xmlhttp;
+        if(window.XMLHttpRequest){
+            xmlhttp=new XMLHttpRequest();
+        }else{
+            window.alert("Sorry! You must be using some old browsers like IE 6. Please change to the newest firefox!");
+        }
+        xmlhttp.open("GET",url,false);
+        xmlhttp.send();
+        var xmlDoc=xmlhttp.responseXML;
+        //document.getElementById("xml_file").innerHTML=xmlhttp.responseText;
+        //document.getElementById("demo").innerHTML=""+xmlDoc.documentElement.nodeName;//xmlDoc.documentElement.getElementsByTagName("Data")[0].childNodes[0].nodeValue+"<br>"+
+            //xmlDoc.documentElement.getElementsByTagName("Row")[0].childNodes[1].nodeType+"<br>";
+        
+        if(xmlhttp.status==404){
+            window.alert("no such file");return null;
+        }else if(xmlhttp.status!=200){
+            window.alert("some error happens. status: "+xmlhttp.status);
+        }
+        return xmlDoc;
+    }
+</script>
+<style>
+    #xmlurl{
+        display: block;
+        margin: auto;
+        margin-top:20px;
+        margin-bottom:20px;
+    }    
+    #btn_submit{
+        display:block;
+        margin:auto;
+        
+    }
+    body{
+        margin:auto;
+        width:500px;
+        height:500px;
+        padding:100px;
+    }
+    h3{
+        margin:auto;
+        margin-top:30px;
+        margin-bottom:30px;
+        padding-left:50px;
+    }
+    div{
+        margin:auto;
+        padding:30px;
+    }
+
+
+</style>
+</head>
+<body >
+    
+    <div>
+    <h3>Enter URL for Newspaper List XML File</h3>
+
+    <input id="xmlurl" type="text"/>
+    <button id="btn_submit" type="button" onclick="parser()">submit</button>
+    </div>
+    <!--
+    <p id="xml_file"></p>
+    <hr>
+    <p id="demo"></p>
+    -->
+</body>
+    
+</html>

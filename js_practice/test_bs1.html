@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html ng-app="congressApp">
+<head>
+    <title> Homework 8</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- jQuery library -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <style>
+        .nav-pills .glyphicon{
+            padding-right:10px;
+            padding-left:10px;
+        }
+        #side_nav{
+            padding-top:55px;
+            height:100%;
+            position:fixed;
+            z-index:1;
+            top:0;
+            left:0;
+            background-color:#222;
+            overflow-x:hidden;
+            width:inherit;
+            
+        }
+        .nav-pills>li>a,.nav-pills>li>a{
+            color:lightgray;
+        }
+        .nav-pills>li.active>a, 
+        .nav-pills>li.active>a:focus, 
+        .nav-pills>li.active>a:hover,
+        .nav-pills>li>a:hover
+        {
+            color:white;
+            background-color: #333;
+        }
+        body{
+            padding-top:55px;
+            background-color:#eee;
+        }
+        
+        .navbar-brand{
+            position:absolute;
+            width:100%;
+            left:0;
+            top:0;
+            text-align: center;
+            margin:0 auto;
+        }
+        .navbar-brand>a,
+        .navbar-brand>a:hover,
+        .navbar-brand>a:focus,
+        .navbar-brand>a:visited{
+            color:#444;
+            text-decoration: none;
+        }
+        #left_icon{
+            padding-left:10px;
+            width:50px;
+        }
+        .breaker{
+            background-color:#ccc;
+            height:1px;
+            margin-bottom:20px;
+        }
+        #logo{
+            width:90px;
+            height:30px;
+            display: inline-block;
+            margin: auto;
+        }
+        .mywell{
+            padding:5px;
+            background-color:white;
+            box-shadow:0px 0px 5px 2px lightgray;
+        }
+        .list_icon{
+            width:40px;
+            height:40px;
+        }
+        .list_legi_icon{
+            width:33px;
+            height;40px;
+        }
+        .capitalize{
+            text-transform: capitalize;
+        }
+        p.inline{
+            display: inline-block;
+        }
+        p.subTitle{
+            font-weight:700;
+        }
+        #state_pick{
+            width:150px;
+        }
+        #legi_carousel{
+            height:100%;
+        }
+        .button_icon{
+            width:20px;
+            height:20px;
+        }
+        .legiPhoto{
+            width:163px;
+            height:199px;
+            margin-bottom:10px;
+            margin:0px auto;
+        }
+        @media (max-width: 768px) {
+        .xs-center{
+            text-align: center;
+        } 
+        }
+        .pdf-viewer{
+            
+            height:inherit;
+        }
+    </style>
+   
+</head>
+<body>
+<div class="container-fluid">
+<!--
+headLine here
+-->
+
+<nav class="navbar navbar-default navbar-fixed-top" >
+    <div class="navbar-header navbar-brand">
+        <a  href="http://sunlightfoundation.com/"> 
+            <img id="logo" src="img/logo.png"/> 
+            Congresss API</a>
+    </div>
+    <div>
+        <ul class="nav navbar-nav">
+            <li id="left_icon"> <a href="#"><span class="glyphicon glyphicon-menu-hamburger"></span></a></li>
+        </ul>
+    </div>
+</nav>
+
+<!--
+navigation bar here
+(left side bar)
+-->  
+
+<div class="row">
+
+<div class="col-xs-2 col-md-2 col-lg-2" id="sidebar">
+<div class="nav" id="side_nav">
+<ul class="nav nav-pills nav-stacked nav-filter" id="navTab">
+    <li class="active"><a data-toggle="tab" href="#main_legi"><span class="glyphicon glyphicon-user"></span><span class="hidden-xs">Legislaters</span></a></li>
+    
+    <li><a data-toggle="tab" href="#main_bill"><span class="glyphicon glyphicon-file"></span><span class="hidden-xs">Bills</span></a></li>
+    
+    <li><a  data-toggle="tab" href="#main_comm"><span class="glyphicon glyphicon-log-in"></span><span class="hidden-xs">Committees</span></a></li>
+    
+    <li><a  data-toggle="tab" href="#main_favo"><span class="glyphicon glyphicon-star"></span><span class="hidden-xs">Favorites</span></a></li>
+</ul>
+
+</div>
+</div>
+<!--
+here is the content
+-->
+
+<div class="col-xs-10 col-md-10 col-lg-10" id="main_content">
+
+
+<div class="tab-content">
+    <div class="tab-pane acrive" id="main_legi">
+        <h1>Legislators</h1>
+        <!--
+        here is the tab of legislators
+        -->
+        <div class="breaker"></div>
+        <div class="mywell" >
+        <div id="legi_carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+          <!-- Wrapper for slides -->
+          <div class="carousel-inner" role="listbox">
+            <div class="item active">
+              <div ng-controller="LegiController">
+            <!--filters-->
+            <ul class="nav nav-tabs" id="legi_navTab">
+                <li class="active"><a data-toggle="tab" href="#by_state">State</a></li>
+                <li><a data-toggle="tab" href="#by_house">House</a></li>
+                <li><a data-toggle="tab" href="#by_senate">Senate</a></li>
+            </ul>
+            
+            
+            <div class="tab-content">
+                <div class="tab-pane" id="by_state">
+                    <div class="well well-sm">
+                    <div class="row">
+                    <div class="col-xs-4">
+                    <p class="subTitle inline">Legislators By State</p>
+                    </div>
+                    <div class="col-xs-8">
+                    <form class="form-inline  pull-right">
+                    <select ng-model="selected_state_code" id="state_pick">
+                    <option value="all_states" selected  >All States</option>
+                    <option value="AL">Alabama</option>
+                    <option value="AK">Alaska</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="AR">Arkansas</option>
+                    <option value="CA">California</option>
+                    <option value="CO">Colorado</option>
+                    <option value="CT">Connecticut</option>
+                    <option value="DE">Delaware</option>
+                    <option value="DC">District Of Columbia</option>
+                    <option value="FL">Florida</option>
+                    <option value="GA">Georgia</option>
+                    <option value="HI">Hawaii</option>
+                    <option value="ID">Idaho</option>
+                    <option value="IL">Illinois</option>
+                    <option value="IN">Indiana</option>
+                    <option value="IA">Iowa</option>
+                    <option value="KS">Kansas</option>
+                    <option value="KY">Kentucky</option>
+                    <option value="LA">Louisiana</option>
+                    <option value="ME">Maine</option>
+                    <option value="MD">Maryland</option>
+                    <option value="MA">Massachusetts</option>
+                    <option value="MI">Michigan</option>
+                    <option value="MN">Minnesota</option>
+                    <option value="MS">Mississippi</option>
+                    <option value="MO">Missouri</option>
+                    <option value="MT">Montana</option>
+                    <option value="NE">Nebraska</option>
+                    <option value="NV">Nevada</option>
+                    <option value="NH">New Hampshire</option>
+                    <option value="NJ">New Jersey</option>
+                    <option value="NM">New Mexico</option>
+                    <option value="NY">New York</option>
+                    <option value="NC">North Carolina</option>
+                    <option value="ND">North Dakota</option>
+                    <option value="OH">Ohio</option>
+                    <option value="OK">Oklahoma</option>
+                    <option value="OR">Oregon</option>
+                    <option value="PA">Pennsylvania</option>
+                    <option value="RI">Rhode Island</option>
+                    <option value="SC">South Carolina</option>
+                    <option value="SD">South Dakota</option>
+                    <option value="TN">Tennessee</option>
+                    <option value="TX">Texas</option>
+                    <option value="UT">Utah</option>
+                    <option value="VT">Vermont</option>
+                    <option value="VA">Virginia</option>
+                    <option value="WA">Washington</option>
+                    <option value="WV">West Virginia</option>
+                    <option value="WI">Wisconsin</option>
+                    <option value="WY">Wyoming</option>
+                    <option value="AS">American Samoa</option>
+                    <option value="GU">Guam</option>
+                    <option value="MP">Northern Mariana Islands</option>
+                    <option value="PR">Puerto Rico</option>
+                    <option value="UM">United States Minor Outlying Islands</option>
+                    <option value="VI">Virgin Islands</option>
+                    <option value="AA">Armed Forces Americas</option>
+                    <option value="AP">Armed Forces Pacific</option>
+                    <option value="AE">Armed Forces Others</option>		
+                    </select>	
+                    </form></div>
+                    </div></div>
+                    <!-- table for pages of data-->
+                    <div class="table-responsive" >
+                        <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Party</th>
+                                <th>Name</th>
+                                <th>Chamber</th>
+                                <th>District</th>
+                                <th>State</th>
+                                <th>View Details</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="oneLegi in allStateResults|filter: stateMatch(selected_state_code) |itemsPerPage: pageSize" pagination-id="legi_by_state">
+                                <td><img class="list_icon" src="img/{{oneLegi.party|lowercase}}.png" ></td>
+                                <td>{{oneLegi.last_name +', ' + oneLegi.first_name}}</td>
+                                <td><img class="list_icon" src="img/{{oneLegi.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize">{{oneLegi.chamber}}</span></td>
+                                <td>{{oneLegi.district==null && 'N.A.' || 'District '+oneLegi.district}}</td>
+                                <td>{{oneLegi.state_name}}</td>
+                                <td><a href="#" data-slide-to='1'><button class="btn btn-primary" data-target="#legi_carousel" data-slide-to="1"  onclick="fillLegiDetail(this.value);"  value="{{oneLegi.bioguide_id}}">View Details</button></a></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                        <!-- page selector -->
+                        </div>
+                        <div class="text-center">
+                         <dir-pagination-controls pagination-id="legi_by_state"></dir-pagination-controls>
+                        </div>
+                    
+            <!--section end here-->
+                </div>
+                <div class="tab-pane" id="by_house">
+                    <div class="well well-sm">
+                    <div class="row">
+                    <div class="col-xs-4">
+                    <p class="subTitle inline">Legislators By House</p>
+                    </div>
+                    <div class="col-xs-8">
+                    <form class="form-inline  pull-right">
+                    <input type="text" placeholder="Search" ng-model="legi_h_query">
+                    </form></div>
+                    </div>
+
+                    </div>
+                    <!-- table for pages of data-->
+                        <div class="table-responsive" >
+                        <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Party</th>
+                                <th>Name</th>
+                                <th>Chamber</th>
+                                <th>District</th>
+                                <th>State</th>
+                                <th>View Details</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="oneLegi in allResults |filter: legi_h_query |filter: 'house' |itemsPerPage: pageSize" pagination-id="legi_by_house">
+                                <td><img class="list_icon" src="img/{{oneLegi.party|lowercase}}.png" ></td>
+                                <td>{{oneLegi.last_name +', ' + oneLegi.first_name}}</td>
+                                <td><img class="list_icon" src="img/{{oneLegi.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{oneLegi.chamber}}</span></td>
+                                <td>{{oneLegi.district==null && 'N.A.' || 'District '+oneLegi.district}}</td>
+                                <td>{{oneLegi.state_name}}</td>
+                                <td><button class="btn btn-primary" data-target="#legi_carousel" data-slide-to="1"  onclick="fillLegiDetail(this.value);"  value="{{oneLegi.bioguide_id}}">View Details</button></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                        <!-- page selector -->
+                        </div>
+                        <div class="text-center">
+                         <dir-pagination-controls pagination-id="legi_by_house"></dir-pagination-controls>
+                        </div>
+                    
+            <!--section end here-->
+                    
+                    
+                    
+                </div>
+                <div class="tab-pane" id="by_senate">
+                    <div class="well well-sm">
+                    <div class="row">
+                    <div class="col-xs-4">
+                    <p class="subTitle inline">Legislators By Senate</p>
+                    </div>
+                    <div class="col-xs-8">
+                    <form class="form-inline  pull-right">
+                    <input type="text" placeholder="Search" ng-model="legi_s_query">
+                    </form></div>
+                    </div>
+                    </div>
+                    <!-- table for pages of data-->
+                        <div class="table-responsive" >
+                        <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Party</th>
+                                <th>Name</th>
+                                <th>Chamber</th>
+                                <th>District</th>
+                                <th>State</th>
+                                <th>View Details</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="oneLegi in allResults| filter: legi_s_query |filter: 'senate' |itemsPerPage: pageSize" pagination-id="legi_by_senate">
+                                <td><img class="list_icon" src="img/{{oneLegi.party|lowercase}}.png" ></td>
+                                <td>{{oneLegi.last_name +', ' + oneLegi.first_name}}</td>
+                                <td><img class="list_icon" src="img/{{oneLegi.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{oneLegi.chamber}}</span></td>
+                                <td>{{oneLegi.district==null && 'N.A.' || 'District '+oneLegi.district}}</td>
+                                <td>{{oneLegi.state_name}}</td>
+                                <td><button class="btn btn-primary" data-target="#legi_carousel" data-slide-to="1"  onclick="fillLegiDetail(this.value);"  value="{{oneLegi.bioguide_id}}">View Details</button></td>
+                            </tr>
+                        </tbody>
+                        </table></div>
+                        <!-- page selector -->
+                        <div class="text-center">
+                         <dir-pagination-controls pagination-id="legi_by_senate"></dir-pagination-controls>
+                        </div>
+                    
+            <!--section end here-->
+                </div>
+            </div>
+            
+            
+            </div>
+            </div>
+<!--legi details here-->
+            <div class="item">
+            <div ng-controller="LegiDetailsController" id="legi_detail_controller">
+            <!--upper bar-->
+            <div class="row">
+            <div class="col-xs-10">
+            <button class="btn btn-default" data-target="#legi_carousel" data-slide-to="0"><span class="glyphicon glyphicon-chevron-left"></span></button>
+            <p class="inline subTitle">Details</p>
+            </div>
+            
+            <div class="col-xs-2">
+            <button class="btn btn-default pull-right"  ng-click="clickFavoLegi(bios)"><img class="button_icon" src="{{'img/'+giveStar(bios)}}"></button>
+            </div>
+            </div>
+            <!--3 tables-->
+            <div class="row">
+                <!-- table 1 -->
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <!-- portrait and details-->
+                    <div class="row">
+                        <div class="col-xs-8 col-sm-12 col-md-5 col-lg-4 col-xs-offset-2 col-sm-offset-0 col-md-offset-1 col-lg-offset-2 ">
+                            <img  id="legi_detail_photo" class="legiPhoto center-block" src="{{'https://theunitedstates.io/images/congress/225x275/'+bios.bioguide_id+'.jpg'}}">
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-lg-offset-0 table-responsive">
+                            <table class="table">
+                            <tr>
+                                <td id="legi_detail_name" class="xs-center">{{bios.title+", "+bios.last_name+", "+bios.first_name}}</td>
+                            </tr>
+                            <tr>
+                                <td class="xs-center" id="legi_detail_email"><a href="mailto:{{bios.email}}">{{bios.oc_email==null && 'N.A.'|| bios.oc_email}}</a></td>
+                            </tr>
+                            <tr>
+                                
+                                <td class="xs-center" id="legi_detail_chamber">Chamber:&nbsp;<span class="capitalize">{{bios.chamber}}</span></td>
+                            </tr>
+                            <tr>
+                                
+                                <td class="xs-center" id="legi_detail_contact">Contact:&nbsp;<a href="{{'tel:'+bios.phone}}">{{bios.phone}}</a></td>
+                            </tr>
+                            <tr>
+                                <td class="xs-center" id="legi_detail_party"><img class="list_icon" src="img/{{bios.party|lowercase}}.png" >&nbsp;&nbsp;{{bios.party=='R' && 'Republic' || (bios.party=='D' && 'Democrat' || 'Independant')}}</td>
+                            </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <table class="table">
+                            <tr>
+                                <td>start_term</td>
+                                <td id="legi_detail_start_term">{{bios.term_start}}</td>
+                            </tr>
+                            <tr>
+                                <td>end_term</td>
+                                <td id="legi_detail_end_term">{{bios.term_end}}</td>
+                            </tr>
+                            <tr>
+                                <td>term</td>
+                                <td id="legi_detail_term"><div class="progress"><div class="progress-bar progress-bar-success"  aria-valuemin="0" aria-valuemax="100" style="{{'width:'+term_progress+'%'}}"></div></div></td>
+                            </tr>
+                            <tr>
+                                <td>office</td>
+                                <td id="legi_detail_office">{{bios.office}}</td>
+                            </tr>
+                            <tr>
+                                <td>state</td>
+                                <td id="legi_detail_state">{{bios.state_name}}</td>
+                            </tr>
+                            <tr>
+                                <td>fax</td>
+                                <td id="legi_detail_fax"><a href="{{bios.fax==null && '' || 'tel:'+bios.fax}}">{{bios.fax==null && 'N.A.' || bios.fax}}</a></td>
+                            </tr>
+                            <tr>
+                                <td>birthday</td>
+                                <td id="legi_detail_birthday">{{bios.birthday}}</td>
+                            </tr>
+			<tr>
+                                <td>Social Links</td>
+                                <td>
+                                <!-- twitter-->
+                                    <a target="_blank" class="{{bios.twitter_id==null && 'hidden' || ''}}" href="{{'https://twitter.com/'+bios.twitter_id}}">
+				    <img class="list_icon" src="img/t.png">
+                                    </a>
+                                <!-- facebook-->
+                                    <a target="_blank" class="{{bios.facebook_id==null && 'hidden' || ''}}" href="{{'https://facebook.com/'+bios.facebook_id}}">
+                                    <img class="list_icon" src="img/f.png">
+                                    </a>
+                                    
+                                    <a target="_blank" class="{{bios.website==null && 'hidden' || ''}}" href="{{bios.website}}">
+                                    <img class="list_icon" src="img/w.png">
+                                    </a>
+                                </td>
+
+			</tr>
+                    </table>
+                </div>
+                <!-- table 2 -->
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 table-responsive">
+                    <table class="table">
+                    <p class="subTitle">Committees</p>
+                    <tr>
+                        <th>Chamber</th>
+                        <th>Committee ID</th>
+                        <th class="hidden-xs">Name</th>
+                    </tr>
+                    <tr  ng-repeat='comm in comms'>
+                        <td><span class="capitalize">{{comm.chamber}}</span></td>
+                        <td>{{comm.committee_id}}</td>
+                        <td class="hidden-xs">{{comm.name}}</td>
+                    </tr>
+                    </table>
+                </div>
+                <!-- table 3 -->
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 table-responsive">
+                    <table class="table">
+                    <p class="subTitle">Bills</p>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th class="hidden-xs">Title</th>
+                        <th class="hidden-xs">Chamber</th>
+                        <th class="hidden-xs">Bill Type</th>
+                        <th class="hidden-xs">Congress</th>
+                        <th>Link</th>
+                    </tr>
+                    <tr ng-repeat="onebill in mybills">
+                        <td>{{onebill.bill_id|uppercase}}</td>
+                        <td class="hidden-xs">{{onebill.official_title}}</td>
+                        <td class="hidden-xs"><span class="capitalize">{{onebill.chamber}}</span></td>
+                        <td class="hidden-xs">{{onebill.bill_type|uppercase}}</td>
+                        <td class="hidden-xs">{{onebill.congress}}</td>
+                        <td><a href="{{onebill.last_version.urls.pdf}}" target="_blank">Link </a></td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
+            </div>
+            </div>
+  <!--legi details end here-->          
+          </div>
+        </div>
+        
+        <!-- carousel first ends here-->      
+        
+        </div>
+        <!-- state part finished-->
+        <!-- here is by house-->
+        
+    </div>
+    <div class="tab-pane" id="main_bill">
+        
+        <h1>Bills</h1>
+        <!--
+        here is the tab of legislators
+        -->
+        <div class="breaker"></div>
+        
+        
+        
+        <div class="mywell" >
+        <div id="bill_carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+          <!-- Wrapper for slides -->
+          <div class="carousel-inner" role="listbox">
+            <div class="item active">
+              
+                <!-- a tab with 2 labels-->
+                <div ng-controller="BillController">
+                    <!--filters-->
+                    <ul class="nav nav-tabs" id="bill_navTab">
+                        <li class="active"><a data-toggle="tab" href="#act_bills">Active Bills</a></li>
+                        <li><a data-toggle="tab" href="#new_bills">New Bills</a></li>
+                    </ul>
+                
+                
+                
+                <!-- tab content here-->
+                
+                <div class="tab-content">
+                    <div class="tab-pane" id="act_bills">
+                        <div class="well well-sm">
+                        <div class="row">
+                        <div class="col-xs-4">
+                        <p class="subTitle inline">Active Bills</p>
+                        </div>
+                            
+                        <div class="col-xs-8">
+                        <form class="form-inline  pull-right">
+                        <input type="text" placeholder="Search" ng-model="act_bills_query">
+                        </form></div>
+                        </div></div>
+                        <!-- table for pages of data-->
+                        <div class="table-responsive" >
+                            <table class="table table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Bill ID</th>
+                                    <th>Bill Type</th>
+                                    <th class="hidden-xs">Title</th>
+                                    <th>Chamber</th>
+                                    <th>Introduced On</th>
+                                    <th>Sponsor</th>
+                                    <th>View Details</th>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                            
+                                <tr dir-paginate="onebill in allActBills|filter: act_bills_query |itemsPerPage: pageSize" pagination-id="bill_act_bills">
+                                
+                                    <td>{{onebill.bill_id|uppercase}}</td>
+                                    <td>{{onebill.bill_type|uppercase}}</td>
+                                    <td class="hidden-xs">{{onebill.official_title}}</td>
+                                    <td><img class="list_icon" src="img/{{onebill.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{onebill.chamber}}</span></td>
+                                    <td>{{onebill.introduced_on}}</td>
+                                    <td>{{onebill.sponsor.title+", "+onebill.sponsor.last_name+", "+onebill.sponsor.first_name}}</td>
+                                    <td><a href="#" data-slide-to='1'><button class="btn btn-primary" data-target="#bill_carousel" data-slide-to="1"  onclick="fillBillDetail(this.value);"  value="{{onebill.bill_id}}">View Details</button></a></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                            <!-- page selector -->
+                        </div>
+                        <div class="text-center">
+                             <dir-pagination-controls pagination-id="bill_act_bills"></dir-pagination-controls>
+                        </div>
+                        
+                <!--section end here-->
+                    </div>
+                    <!--new bills start here-->
+                    <div class="tab-pane" id="new_bills">
+                        <div class="well well-sm">
+                        <div class="row">
+                        <div class="col-xs-4">
+                        <p class="subTitle inline">New Bills</p>
+                        </div>
+                            
+                        <div class="col-xs-8">
+                        <form class="form-inline  pull-right">
+                        <input type="text" placeholder="Search" ng-model="new_bills_query">
+                        </form></div>
+                        </div></div>
+                        <!-- table for pages of data-->
+                        <div class="table-responsive" >
+                            <table class="table table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Bill ID</th>
+                                    <th>Bill Type</th>
+                                    <th class="hidden-xs">Title</th>
+                                    <th>Chamber</th>
+                                    <th>Introduced On</th>
+                                    <th>Sponsor</th>
+                                    <th>View Details</th>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                            
+                                <tr dir-paginate="onebill in allNewBills|filter: new_bills_query |itemsPerPage: pageSize" pagination-id="bill_new_bills">
+                                
+                                    <td>{{onebill.bill_id|uppercase}}</td>
+                                    <td>{{onebill.bill_type|uppercase}}</td>
+                                    <td class="hidden-xs">{{onebill.official_title}}</td>
+                                    <td><img class="list_icon" src="img/{{onebill.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{onebill.chamber}}</span></td>
+                                    <td>{{onebill.introduced_on}}</td>
+                                    <td>{{onebill.sponsor.title+", "+onebill.sponsor.last_name+", "+onebill.sponsor.first_name}}</td>
+                                    <td><a href="#" data-slide-to='1'><button class="btn btn-primary" data-target="#bill_carousel" data-slide-to="1"  onclick="fillBillDetail(this.value);"  value="{{onebill.bill_id}}">View Details</button></a></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                            <!-- page selector -->
+                        </div>
+                        <div class="text-center">
+                             <dir-pagination-controls pagination-id="bill_new_bills"></dir-pagination-controls>
+                        </div>
+                        
+                <!--section end here-->
+                    </div>
+                    <div class="tab-pane" id="new_bills"></div>
+                </div>
+                
+                
+            </div>
+            </div>
+            <div class="item">
+            
+                
+            <div ng-controller="BillDetailsController" id="bill_detail_controller">
+                <!--upper bar-->
+                <div class="row">
+                <div class="col-xs-10">
+                <button class="btn btn-default" data-target="#bill_carousel" data-slide-to="0"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                <p class="inline subTitle">Details</p>
+                </div>
+                    
+                <div class="col-xs-2">
+                    <button class="btn btn-default pull-right"  ng-click="clickFavoBill(onebill)"><img class="button_icon" src="{{'img/'+giveStar(onebill)}}"></button>
+                 
+                </div>
+                </div>
+                
+                <!-- bill data a table and an iframe-->
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <table class="table">
+                        <tr>
+                            <td>Bill ID</td>
+                            <td>{{onebill.bill_id|uppercase}}</td>
+                        </tr>
+                        <tr>
+                            <td>Title</td>
+                            <td>{{onebill.official_title}}</td>
+                        </tr>
+                        <tr>
+                            <td>Bill Type</td>
+                            <td>{{onebill.bill_type|uppercase}}</td>
+                        </tr>
+                        <tr>
+                            <td>Sponsor</td>
+                            <td>{{onebill.sponsor.title+", "+onebill.sponsor.last_name+", "+onebill.sponsor.first_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Chamber</td>
+                            <td><span class="capitalize"> {{onebill.chamber}}</span></td>
+                        </tr>
+                        <tr>
+                            <td>Bill Type</td>
+                            <td>{{onebill.history.active==false && 'New' ||'Active'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Introduced On</td>
+                            <td>{{date_introduced}}</td>
+                        </tr>
+                        <tr>
+                            <td>Congress URL</td>
+                            <td><a href="{{onebill.urls.congress}}" target="_blank">URL</a></td>
+                        </tr>
+                        <tr>
+                            <td>Version Status</td>
+                            <td>{{onebill.last_version.version_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Bill URL</td>
+                            <td><a href="{{onebill.last_version.urls.pdf}}" target="_blank">URL</a></td>
+                        </tr>
+                        </table>
+                    </div>
+                    <div class="hidden-xs col-sm-6 col-md-6 col-lg-6 pdf-viewer">
+                        <object type="application/pdf" data="{{onebill.last_version.urls.pdf}}" width="100%" height="768px"></object>
+                    </div>
+                </div>
+            </div>
+                
+                
+                
+                
+                
+                
+                
+            </div>
+            
+          </div>
+        
+        </div>
+        </div>
+        <!--
+        here is the tab of bills
+        -->
+    </div>
+    
+    <div class="tab-pane" id="main_comm">
+        
+         <h1>Committees</h1>
+        <!--
+        here is the tab of legislators
+        -->
+        <div class="breaker"></div>
+        <!--
+        here is the tab of committees
+        -->
+        <div class="mywell" >
+        <div ng-controller="CommController" id="comm_controller">
+            <!--filters-->
+            <ul class="nav nav-tabs" id="comm_navTab">
+                <li class="active"><a data-toggle="tab" href="#comm_by_house">House</a></li>
+                <li><a data-toggle="tab" href="#comm_by_senate">Senate</a></li>
+                <li><a data-toggle="tab" href="#comm_by_joint">Joint</a></li>
+                
+            </ul>
+        
+            
+            <div class="tab-content">
+                <div class="tab-pane" id="comm_by_house">
+                    <div class="well well-sm">
+                    <div class="row">
+                    <div class="col-xs-4">
+                    <p class="subTitle inline">Committees By House</p>
+                    </div>
+                    <div class="col-xs-8">
+                    <form class="form-inline  pull-right">
+                    <input type="text" placeholder="Search" ng-model="comm_h_query">
+                    </form></div>
+                    </div>
+
+                    </div>
+                    <!-- table for pages of data-->
+                        <div class="table-responsive" >
+                        <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Chamber</th>
+                                <th>Committee ID</th>
+                                <th>Name</th>
+                                <th>Parent Committee</th>
+                                <th>Contact</th>
+                                <th>Office</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="onecomm in allResults |filter: comm_h_query |filter: 'house' |itemsPerPage: pageSize" pagination-id="comm_by_house">
+                                <td><button class="btn btn-default "  ng-click="clickFavoComm(onecomm)"><img class="button_icon" src="{{'img/'+giveStar(onecomm)}}"></button></td>
+                                <td><img class="list_icon" src="img/{{onecomm.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{onecomm.chamber}}</span></td>
+                                <td>{{onecomm.committee_id|uppercase}}</td>
+                                <td> {{onecomm.name}}</td>
+                                <td> {{onecomm.parent_committee_id|uppercase}}</td>
+                                <td> <a href="{{'tel:'+onecomm.phone}}">{{onecomm.phone}}</a></td>
+                                <td> {{onecomm.office==null && 'N.A.' || onecomm.office}}</td>
+                                
+                            </tr>
+                        </tbody>
+                        </table>
+                        <!-- page selector -->
+                        </div>
+                        <div class="text-center">
+                         <dir-pagination-controls pagination-id="comm_by_house"></dir-pagination-controls>
+                        </div>
+                    
+            <!--section end here-->
+                    
+                    
+                    
+                </div>
+                <div class="tab-pane" id="comm_by_senate">
+                    <div class="well well-sm">
+                    <div class="row">
+                    <div class="col-xs-4">
+                    <p class="subTitle inline">Committees By Senate</p>
+                    </div>
+                    <div class="col-xs-8">
+                    <form class="form-inline  pull-right">
+                    <input type="text" placeholder="Search" ng-model="comm_s_query">
+                    </form></div>
+                    </div>
+
+                    </div>
+                    <!-- table for pages of data-->
+                        <div class="table-responsive" >
+                        <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Chamber</th>
+                                <th>Committee ID</th>
+                                <th>Name</th>
+                                <th>Parent Committee</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="onecomm in allResults |filter: comm_s_query |filter: 'senate' |itemsPerPage: pageSize" pagination-id="comm_by_senate">
+                                <td><button class="btn btn-default"  ng-click="clickFavoComm(onecomm)"><img class="button_icon" src="{{'img/'+giveStar(onecomm)}}"></button></td>
+                                <td><img class="list_icon" src="img/{{onecomm.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{onecomm.chamber}}</span></td>
+                                <td>{{onecomm.committee_id|uppercase}}</td>
+                                <td> {{onecomm.name}}</td>
+                                <td> {{onecomm.parent_committee_id|uppercase}}</td>
+                                
+                            </tr>
+                        </tbody>
+                        </table>
+                        <!-- page selector -->
+                        </div>
+                        <div class="text-center">
+                         <dir-pagination-controls pagination-id="comm_by_senate"></dir-pagination-controls>
+                        </div>
+                    
+            <!--section end here-->
+                    
+                    
+                    
+                </div>
+                <div class="tab-pane" id="comm_by_joint">
+                    <div class="well well-sm">
+                    <div class="row">
+                    <div class="col-xs-4">
+                    <p class="subTitle inline">Committees By Joint</p>
+                    </div>
+                    <div class="col-xs-8">
+                    <form class="form-inline  pull-right">
+                    <input type="text" placeholder="Search" ng-model="comm_j_query">
+                    </form></div>
+                    </div>
+
+                    </div>
+                    <!-- table for pages of data-->
+                        <div class="table-responsive" >
+                        <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Chamber</th>
+                                <th>Committee ID</th>
+                                <th>Name</th>
+                            </tr>    
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="onecomm in allResults  |filter: comm_j_query |filter: 'joint' |itemsPerPage: pageSize" pagination-id="comm_by_senate">
+                                <td><button class="btn btn-default "  ng-click="clickFavoComm(onecomm)"><img class="button_icon" src="{{'img/'+giveStar(onecomm)}}"></button></td>
+                                <td><img class="list_icon" src="img/s.svg" ><span class="capitalize"> {{onecomm.chamber}}</span></td>
+                                <td>{{onecomm.committee_id|uppercase}}</td>
+                                <td> {{onecomm.name}}</td>
+                            </tr>
+                        </tbody>
+                        </table>
+                        <!-- page selector -->
+                        </div>
+                        <div class="text-center">
+                         <dir-pagination-controls pagination-id="comm_by_senate"></dir-pagination-controls>
+                        </div>
+                    
+            <!--section end here-->
+                    
+                    
+                    
+                </div>
+            </div>
+        </div>
+        
+        </div>
+        
+        
+        
+        
+    </div>
+    <div class="tab-pane" id="main_favo">
+        <!--
+        here is the tab of legislators
+        -->
+         <h1>Committees</h1>
+        <!--
+        here is the tab of legislators
+        -->
+        <div class="breaker"></div>
+        
+        
+        
+        
+         <div class="mywell" >
+        <div id="favo_carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+          <!-- Wrapper for slides -->
+          <div class="carousel-inner" role="listbox">
+            <div class="item active">
+         
+                
+               
+            <div ng-controller="FavoController" id="favo_controller">
+                <!--filters-->
+                <ul class="nav nav-tabs" id="favo_navTab">
+                    <li class="active"><a data-toggle="tab" href="#favo_legi">Legistors</a></li>
+                    <li><a data-toggle="tab" href="#favo_bill">Bills</a></li>
+                    <li><a data-toggle="tab" href="#favo_comm">Committees</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="favo_legi">
+                        <div class="well well-sm">
+                        <div class="row">
+                        <div class="col-xs-12">
+                        <p class="subTitle inline">Favorite Legistors</p>
+                        </div>
+                        
+                        </div>
+
+                        </div>
+                        <!-- table for pages of data-->
+                            <div class="table-responsive" >
+                            <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Image</th>
+                                    <th>Party</th>
+                                    <th>Name</th>
+                                    <th>Chamber</th>
+                                    <th>State</th>
+                                    <th>Email</th>
+                                    <th>View Details</th>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="bios in allFavoLegis" >
+                                    <td><button class="btn btn-default " ng-click="delFavoLegi(bios)"><span class="glyphicon glyphicon-trash"></span></button></td>
+                                    
+                                    <td><img  class="list_legi_icon" src="{{'https://theunitedstates.io/images/congress/225x275/'+bios.bioguide_id+'.jpg'}}"></td>
+                                    <td><img class="list_icon" src="img/{{bios.party|lowercase}}.png" ></td>
+                                    <td>{{bios.last_name+', '+bios.first_name}}</td>
+                                    <td><img class="list_icon" src="img/{{bios.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{bios.chamber}}</span></td>
+                                    <td> {{bios.state_name}}</td>
+                                    <td class="xs-center" id="legi_detail_email"><a href="mailto:{{bios.email}}">{{bios.oc_email==null && 'N.A.'|| bios.oc_email}}</a></td>
+                                    <td><button class="btn btn-primary" data-target="#favo_carousel" data-slide-to="1"  onclick="fillLegiDetail_favo(this.value);"  value="{{bios.bioguide_id}}">View Details</button></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                            <!-- page selector -->
+                            </div>
+                            
+
+                <!--section end here-->
+                    </div>
+                    
+                    <div class="tab-pane" id="favo_bill">
+                        <div class="well well-sm">
+                        <div class="row">
+                        <div class="col-xs-12">
+                        <p class="subTitle inline">Favorite Bills</p>
+                        </div>
+                        </div>
+
+                        </div>
+                        <!-- table for pages of data-->
+                            <div class="table-responsive" >
+                            <table class="table table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Bill ID</th>
+                                    <th>Bill Type</th>
+                                    <th class="hidden-xs">Title</th>
+                                    <th>Chamber</th>
+                                    <th>Introduced On</th>
+                                    <th>Sponsor</th>
+                                    <th>View Details</th>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="onebill in allFavoBills " >
+                                    <td><button class="btn btn-default " ng-click="delFavoBill(onebill)"><span class="glyphicon glyphicon-trash"></span></button></td>
+                                    <td>{{onebill.bill_id|uppercase}}</td>
+                                    <td>{{onebill.bill_type|uppercase}}</td>
+                                    <td class="hidden-xs">{{onebill.official_title}}</td>
+                                    <td><img class="list_icon" src="img/{{onebill.chamber.charAt(0)=='s' && 's.svg' || 'h.png' }}" ><span class="capitalize"> {{onebill.chamber}}</span></td>
+                                    <td>{{onebill.introduced_on}}</td>
+                                    <td>{{onebill.sponsor.title+", "+onebill.sponsor.last_name+", "+onebill.sponsor.first_name}}</td>
+                                    <td><button class="btn btn-primary" data-target="#favo_carousel" data-slide-to="2"  onclick="fillBillDetail_favo(this.value);"  value="{{onebill.bill_id}}">View Details</button></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                            <!-- page selector -->
+                            </div>
+                <!--section end here-->
+                    </div>
+                    
+                    
+                    <div class="tab-pane" id="favo_comm">
+                        <div class="well well-sm">
+                        <div class="row">
+                        <div class="col-xs-12">
+                        <p class="subTitle inline">Favorite Committees</p>
+                        </div>
+                        </div>
+
+                        </div>
+                        <!-- table for pages of data-->
+                            <div class="table-responsive" >
+                            <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Chamber</th>
+                                    <th>Committee ID</th>
+                                    <th>Name</th>
+                                    <th>Parent Committee</th>
+                                    <th>Sub Committee</th>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="onecomm in allFavoComms track by $index" >
+                                    <td><button class="btn btn-default " ng-click="delFavoComm(onecomm)"><span class="glyphicon glyphicon-trash"></span></button></td>
+                                    <td><img class="list_icon" src="img/{{onecomm.chamber.charAt(0)=='h' && 'h.png' || 's.svg' }}" ><span class="capitalize"> {{onecomm.chamber}}</span></td>
+                                    <td>{{onecomm.committee_id|uppercase}}</td>
+                                    <td> {{onecomm.name}}</td>
+                                    <td>{{onecomm.parent_committee_id}}</td>
+                                    <td><span class="capitalize">{{onecomm.subcommittee}}</span></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                            <!-- page selector -->
+                            </div>
+
+                <!--section end here-->
+                    </div>
+                </div>
+                
+                </div>
+                
+                
+            </div>
+
+            <div class="item">
+
+                <!--details for legis-->
+                
+            <div ng-controller="LegiDetailsController_favo" id="legi_detail_controller_favo">
+                <!--upper bar-->
+                <div class="row">
+                <div class="col-xs-10">
+                <button class="btn btn-default" data-target="#favo_carousel" data-slide-to="0"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                <p class="inline subTitle">Details</p>
+                </div>
+
+                <div class="col-xs-2">
+                <button class="btn btn-default pull-right"  ng-click="clickFavoLegi(bios)"><img class="button_icon" src="{{'img/'+giveStar(bios)}}"></button>
+                </div>
+                </div>
+                <!--3 tables-->
+                <div class="row">
+                    <!-- table 1 -->
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <!-- portrait and details-->
+                        <div class="row">
+                            <div class="col-xs-8 col-sm-12 col-md-5 col-lg-4 col-xs-offset-2 col-sm-offset-0 col-md-offset-1 col-lg-offset-2 ">
+                                <img  id="legi_detail_photo" class="legiPhoto center-block" src="{{'https://theunitedstates.io/images/congress/225x275/'+bios.bioguide_id+'.jpg'}}">
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-lg-offset-0 table-responsive">
+                                <table class="table">
+                                <tr>
+                                    <td id="legi_detail_name" class="xs-center">{{bios.title+", "+bios.last_name+", "+bios.first_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="xs-center" id="legi_detail_email"><a href="mailto:{{bios.email}}">{{bios.oc_email==null && 'N.A.'|| bios.oc_email}}</a></td>
+                                </tr>
+                                <tr>
+
+                                    <td class="xs-center" id="legi_detail_chamber">Chamber:&nbsp;<span class="capitalize">{{bios.chamber}}</span></td>
+                                </tr>
+                                <tr>
+
+                                    <td class="xs-center" id="legi_detail_contact">Contact:&nbsp;<a href="{{'tel:'+bios.phone}}">{{bios.phone}}</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="xs-center" id="legi_detail_party"><img class="list_icon" src="img/{{bios.party|lowercase}}.png" >&nbsp;&nbsp;{{bios.party=='R' && 'Republic' || (bios.party=='D' && 'Democrat' || 'Independant')}}</td>
+                                </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <table class="table">
+                                <tr>
+                                    <td>start_term</td>
+                                    <td id="legi_detail_start_term">{{bios.term_start}}</td>
+                                </tr>
+                                <tr>
+                                    <td>end_term</td>
+                                    <td id="legi_detail_end_term">{{bios.term_end}}</td>
+                                </tr>
+                                <tr>
+                                    <td>term</td>
+                                    <td id="legi_detail_term"><div class="progress"><div class="progress-bar progress-bar-success"  aria-valuemin="0" aria-valuemax="100" style="{{'width:'+term_progress+'%'}}"></div></div></td>
+                                </tr>
+                                <tr>
+                                    <td>office</td>
+                                    <td id="legi_detail_office">{{bios.office}}</td>
+                                </tr>
+                                <tr>
+                                    <td>state</td>
+                                    <td id="legi_detail_state">{{bios.state_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>fax</td>
+                                    <td id="legi_detail_fax"><a href="{{bios.fax==null && '' || 'tel:'+bios.fax}}">{{bios.fax==null && 'N.A.' || bios.fax}}</a></td>
+                                </tr>
+                                <tr>
+                                    <td>birthday</td>
+                                    <td id="legi_detail_birthday">{{bios.birthday}}</td>
+                                </tr>
+<tr>
+                                <td>Social Links</td>
+                                <td>
+                                <!-- twitter-->
+                                    <a target="_blank" class="{{bios.twitter_id==null && 'hidden' || ''}}" href="{{'https://twitter.com/'+bios.twitter_id}}">
+                                    <img class="list_icon" src="img/t.png">
+                                    </a>
+                                <!-- facebook-->
+                                    <a target="_blank" class="{{bios.facebook_id==null && 'hidden' || ''}}" href="{{'https://facebook.com/'+bios.facebook_id}}">
+                                    <img class="list_icon" src="img/f.png">
+                                    </a>
+                                    
+                                    <a target="_blank" class="{{bios.website==null && 'hidden' || ''}}" href="{{bios.website}}">
+                                    <img class="list_icon" src="img/w.png">
+                                    </a>
+                                </td>
+
+</tr>
+                        </table>
+                    </div>
+                    <!-- table 2 -->
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 table-responsive">
+                        <table class="table">
+                        <p class="subTitle">Committees</p>
+                        <tr>
+                            <th>Chamber</th>
+                            <th>Committee ID</th>
+                            <th class="hidden-xs">Name</th>
+                        </tr>
+                        <tr  ng-repeat='comm in comms'>
+                            <td><span class="capitalize">{{comm.chamber}}</span></td>
+                            <td>{{comm.committee_id}}</td>
+                            <td class="hidden-xs">{{comm.name}}</td>
+                        </tr>
+                        </table>
+                    </div>
+                    <!-- table 3 -->
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 table-responsive">
+                        <table class="table">
+                        <p class="subTitle">Bills</p>
+                        <tr>
+                            <th>Bill ID</th>
+                            <th class="hidden-xs">Title</th>
+                            <th class="hidden-xs">Chamber</th>
+                            <th class="hidden-xs">Bill Type</th>
+                            <th class="hidden-xs">Congress</th>
+                            <th>Link</th>
+                        </tr>
+                        <tr ng-repeat="onebill in mybills">
+                            <td>{{onebill.bill_id|uppercase}}</td>
+                            <td class="hidden-xs">{{onebill.official_title}}</td>
+                            <td class="hidden-xs"><span class="capitalize">{{onebill.chamber}}</span></td>
+                            <td class="hidden-xs">{{onebill.bill_type|uppercase}}</td>
+                            <td class="hidden-xs">{{onebill.congress}}</td>
+                            <td><a href="{{onebill.last_version.urls.pdf}}" target="_blank">Link </a></td>
+                        </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+                
+            </div>
+            <div class="item">
+                <!--details for legis-->
+                
+            <div ng-controller="BillDetailsController_favo" id="bill_detail_controller_favo">
+                <!--upper bar-->
+                <div class="row">
+                <div class="col-xs-10">
+                <button class="btn btn-default" data-target="#favo_carousel" data-slide-to="0"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                <p class="inline subTitle">Details</p>
+                </div>
+                    
+                <div class="col-xs-2">
+                    <button class="btn btn-default pull-right"  ng-click="clickFavoBill(onebill)"><img class="button_icon" src="{{'img/'+giveStar(onebill)}}"></button>
+                 
+                </div>
+                </div>
+                
+                <!-- bill data a table and an iframe-->
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <table class="table">
+                        <tr>
+                            <td>Bill ID</td>
+                            <td>{{onebill.bill_id|uppercase}}</td>
+                        </tr>
+                        <tr>
+                            <td>Title</td>
+                            <td>{{onebill.official_title}}</td>
+                        </tr>
+                        <tr>
+                            <td>Bill Type</td>
+                            <td>{{onebill.bill_type|uppercase}}</td>
+                        </tr>
+                        <tr>
+                            <td>Sponsor</td>
+                            <td>{{onebill.sponsor.title+", "+onebill.sponsor.last_name+", "+onebill.sponsor.first_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Chamber</td>
+                            <td><span class="capitalize"> {{onebill.chamber}}</span></td>
+                        </tr>
+                        <tr>
+                            <td>Bill Type</td>
+                            <td>{{onebill.history.active==false && 'New' ||'Active'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Introduced On</td>
+                            <td>{{date_introduced}}</td>
+                        </tr>
+                        <tr>
+                            <td>Congress URL</td>
+                            <td><a href="{{onebill.urls.congress}}" target="_blank">URL</a></td>
+                        </tr>
+                        <tr>
+                            <td>Version Status</td>
+                            <td>{{onebill.last_version.version_name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Bill URL</td>
+                            <td><a href="{{onebill.last_version.urls.pdf}}" target="_blank">URL</a></td>
+                        </tr>
+                        </table>
+                    </div>
+                    <div class="hidden-xs col-sm-6 col-md-6 col-lg-6 pdf-viewer">
+                        <object type="application/pdf" data="{{onebill.last_version.urls.pdf}}" width="100%" height="768px"></object>
+                    </div>
+                </div>
+            </div>
+                
+            </div>
+                <!--details for bills-->
+                
+                
+                
+            </div>
+             </div></div>
+
+    </div>
+    
+</div>
+</div>
+    
+<!--
+here is the tab
+-->
+
+<!-- here is some other things-->
+</div>
+</div>
+ 
+
+    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+<script src="js/dirPagination.js"></script>
+<script src="js/date.format.js"></script>
+     <script> 
+    //for toggle
+        var all_legi;
+	    var all_legi_favo;
+        var all_new_bill;
+        var all_act_bill;
+        var all_comm;
+	var php_file='uinuin_hw8_query.php';
+        $(function(){
+        $("#left_icon a").click(function(){
+            $("#sidebar").toggleClass("hidden");
+            $("#main_content").toggleClass("col-xs-10");
+            $("#main_content").toggleClass("col-md-10");
+            $("#main_content").toggleClass("col-lg-10");
+        })});
+        
+           //
+        function fillLegiDetail(legi_id){
+            //alert(legi_id);
+            $("#legi_detail_controller").scope().reload(legi_id);
+        }
+        function fillLegiDetail_favo(legi_id){
+            //alert(legi_id);
+            $("#legi_detail_controller_favo").scope().reload(legi_id);
+        }
+        //angularjs herer
+        var congressApp=angular.module('congressApp',['angularUtils.directives.dirPagination']);
+        //get all legi data
+        function LegiController($scope,$http){
+            $scope.selected_state_code="all_states";
+            $scope.allResults=[];
+	    $scope.allStateResults=[];
+            $scope.stateMatch=function(state_code){
+                //var state_code=$("#state_pick").val();
+                //alert("here "+state_code);
+                if(state_code=="all_states" ||state_code=="")return true;
+                return function(item){
+                    return item.state==state_code;
+                };
+            }
+//get all legi
+            $http.get(php_file+'?all_legi=1').then(
+                function(response){
+                    $scope.pageSize=10;
+                    $scope.currentPage=1;
+                    $scope.allResults=[];
+                    $scope.allResults=response.data.results;
+		    all_legi=$scope.allResults;
+                    //alert('get results: '+response.data.results.length+" "+$scope.allResults.length);
+                }
+            );
+	    $http.get(php_file+'?all_legi_state=1').then(
+                function(response){
+                    $scope.pageSize=10;
+                    $scope.currentPage=1;
+                    $scope.allStateResults=[];
+                    $scope.allStateResults=response.data.results;
+                }
+            );
+        }
+        //legi detail filler
+        function LegiDetailsController($scope,$http){
+            $scope.query_id="";
+            $scope.mybills=[];
+            $scope.comms=[];
+            $scope.bios=[];
+            $scope.term_progress=0;
+            
+            $scope.clickFavoLegi=function(onecomm){
+
+                var tempScope=$("#favo_controller").scope();
+                //alert(iddd+" ");
+                if(tempScope.hasLegi(onecomm)){
+                    tempScope.removeLegi(onecomm);
+                }else{
+                    tempScope.addLegi(onecomm);
+                }
+            }
+            $scope.giveStar=function(onecomm){
+                if( $("#favo_controller").scope().hasLegi(onecomm)){
+                    return 'star_yellow.png';
+                }else{
+                    return 'star_empty.png';
+                }
+            }
+            
+            $scope.reload=function(legi_id){
+                //alert("reloading");
+                //get bios
+		$scope.bios=null;
+		for(i=0;i<all_legi.length;i++){
+			if(all_legi[i].bioguide_id==legi_id){
+				$scope.bios=all_legi[i];	
+			}
+		}	
+		if($scope.bios!=null)	{
+                    var datestart=new Date($scope.bios.term_start);
+                    var dateend=new Date($scope.bios.term_end);
+                    var datecurr=new Date();
+                    var one_day=1000*60*60*24;
+                    var total_days=Math.round((dateend.getTime()-datestart.getTime())/one_day);
+                    var now_days=Math.round((datecurr.getTime()-datestart.getTime())/one_day);
+                    $scope.term_progress=Math.round((total_days-now_days)*100.0/total_days);
+                    //alert(total_days+" "+now_days+" "+$scope.term_progress);
+                   } 
+                //get comms
+                $http.get(php_file+'?one_legi_comm='+legi_id).then(
+                function(response){
+                    $scope.comms=response.data.results;
+                }
+                );
+                //get bills
+                $http.get(php_file+'?one_legi_bill='+legi_id).then(
+                function(response){
+                    $scope.mybills=response.data.results;
+                    //alert(JSON.stringify($scope.mybills,null,4));
+                }
+                );
+            }
+            
+        }
+        
+        ////bill controller
+        function BillController($scope,$http){
+            $scope.allActBills=[];
+            $scope.allNewBills=[];
+            $scope.pageSize=10;
+            $scope.currentPage=1;
+            $http.get(php_file+'?act_bill=1').then(
+                function(response){
+                    $scope.allActBills=[];
+                    $scope.allActBills=response.data.results;
+                    //alert('get results: '+response.data.results.length+" "+$scope.allActBills.length);
+                    //alert(JSON.stringify($scope.allActBills,null,4));
+                }
+            );
+            $http.get(php_file+'?new_bill=1').then(
+                function(response){
+                    $scope.allNewBills=response.data.results;
+                    //alert('get results: '+response.data.results.length+" "+$scope.allNewBills.length);
+                }
+            );
+        }
+        /////////////////////////bill detail controller
+        function BillDetailsController($scope,$http){
+            $scope.query_id="";
+            $scope.onebill={};
+            $scope.term_progress=0;
+            $scope.date_introduced="";
+            
+            $scope.clickFavoBill=function(onecomm){
+
+                var tempScope=$("#favo_controller").scope();
+                //alert(" bills hrere"+JSON.stringify(onecomm,null,4));
+                if(tempScope.hasBill(onecomm)){
+                    tempScope.removeBill(onecomm);
+                }else{
+                    tempScope.addBill(onecomm);
+                }
+            }
+            $scope.giveStar=function(onecomm){
+                if( $("#favo_controller").scope().hasBill(onecomm)){
+                    return 'star_yellow.png';
+                }else{
+                    return 'star_empty.png';
+                }
+            }
+            $scope.reload=function(bill_id){
+                //get comms
+                $http.get(php_file+'?one_bill='+bill_id).then(
+                function(response){
+                    $scope.onebill=response.data.results[0];
+                    var tdate=new Date($scope.onebill.introduced_on);
+                    //alert(JSON.stringify(tdate,null,4));
+                    $scope.date_introduced=dateFormat(tdate,'mmm d, yyyy');
+                    //alert(JSON.stringify(tdate,null,4));
+                }
+                );
+            }
+            
+        }
+        
+        
+        
+        /////////////////////////////////////////////////////////////details for favor
+        /////////////////////////detail controller
+         //legi detail filler
+        function LegiDetailsController_favo($scope,$http){
+            $scope.query_id="";
+            $scope.mybills=[];
+            $scope.comms=[];
+            $scope.bios=[];
+            $scope.term_progress=0;
+            
+            $scope.clickFavoLegi=function(onecomm){
+
+                var tempScope=$("#favo_controller").scope();
+                //alert(iddd+" ");
+                if(tempScope.hasLegi(onecomm)){
+                    tempScope.removeLegi(onecomm);
+                }else{
+                    tempScope.addLegi(onecomm);
+                }
+            }
+            $scope.giveStar=function(onecomm){
+                if( $("#favo_controller").scope().hasLegi(onecomm)){
+                    return 'star_yellow.png';
+                }else{
+                    return 'star_empty.png';
+                }
+            }
+            
+            $scope.reload=function(one_legi){
+                //alert("reloading"+one_legi);
+                //get bios
+		$scope.bios=null;
+		for(i=0;i<all_legi_favo.length;i++){
+			if(all_legi_favo[i].bioguide_id==one_legi){
+				$scope.bios=all_legi_favo[i];	
+			}
+		}
+		if($scope.bios!=null){
+                    var datestart=new Date($scope.bios.term_start);
+                    var dateend=new Date($scope.bios.term_end);
+                    var datecurr=new Date();
+                    var one_day=1000*60*60*24;
+                    var total_days=Math.round((dateend.getTime()-datestart.getTime())/one_day);
+                    var now_days=Math.round((datecurr.getTime()-datestart.getTime())/one_day);
+                    $scope.term_progress=Math.round((total_days-now_days)*100.0/total_days);
+                    //alert(total_days+" "+now_days+" "+$scope.term_progress);
+		}
+                //get bills
+                $http.get(php_file+'?one_legi_comm='+one_legi).then(
+                function(response){
+                    $scope.comms=response.data.results;
+                }
+                );
+                //get comms
+                $http.get(php_file+'?one_legi_bill='+one_legi).then(
+                function(response){
+                    $scope.mybills=response.data.results;
+                    //alert(JSON.stringify($scope.mybills,null,4));
+                }
+                );
+            }
+            
+        }
+        
+        function BillDetailsController_favo($scope,$http){
+            $scope.query_id="";
+            $scope.onebill={};
+            $scope.term_progress=0;
+            $scope.date_introduced="";
+            
+            $scope.clickFavoBill=function(onecomm){
+
+                var tempScope=$("#favo_controller").scope();
+                //alert(" bills hrere"+JSON.stringify(onecomm,null,4));
+                if(tempScope.hasBill(onecomm)){
+                    tempScope.removeBill(onecomm);
+                }else{
+                    tempScope.addBill(onecomm);
+                }
+            }
+            $scope.giveStar=function(onecomm){
+                if( $("#favo_controller").scope().hasBill(onecomm)){
+                    return 'star_yellow.png';
+                }else{
+                    return 'star_empty.png';
+                }
+            }
+            
+            
+            $scope.reload=function(bill_id){
+                //get comms
+                $http.get(php_file+'?one_bill='+bill_id).then(
+                function(response){
+                    $scope.onebill=response.data.results[0];
+                    var tdate=new Date($scope.onebill.introduced_on);
+                    //alert(JSON.stringify(tdate,null,4));
+                    $scope.date_introduced=dateFormat(tdate,'mmm d, yyyy');
+                    //alert(JSON.stringify(tdate,null,4));
+                }
+                );
+            }
+            
+        }
+        function fillBillDetail(legi_id){
+            
+            $("#bill_detail_controller").scope().reload(legi_id);
+        }
+        function fillBillDetail_favo(legi_id){
+            
+            $("#bill_detail_controller_favo").scope().reload(legi_id);
+        }
+        
+        //get all comm data
+        function CommController($scope,$http){
+            $scope.allResults=[];
+            $http.get(php_file+'?all_comm=1').then(
+                function(response){
+                    $scope.pageSize=10;
+                    $scope.currentPage=1;
+                    $scope.allResults=[];
+                    $scope.allResults=response.data.results;
+                    //alert('get results: '+response.data.results.length+" "+$scope.allResults.length);
+                }
+            );
+            $scope.clickFavoComm=function(onecomm){
+
+                var tempScope=$("#favo_controller").scope();
+                //alert(iddd+" ");
+                if(tempScope.hasComm(onecomm)){
+                    tempScope.removeComm(onecomm);
+                }else{
+                    tempScope.addComm(onecomm);
+                }
+            }
+            $scope.giveStar=function(onecomm){
+                if( $("#favo_controller").scope().hasComm(onecomm)){
+                    return 'star_yellow.png';
+                }else{
+                    return 'star_empty.png';
+                }
+            }
+        }
+        /////////////////////////////////////////////////
+        
+        ////////////////////////////all favo history
+        function FavoController($scope){
+            //init
+            $scope.allFavoLegis=[];
+            $scope.allFavoBills=[];
+            $scope.allFavoComms=[];
+            var favoLegis=localStorage.getItem("favoLegis");
+            var favoBills=localStorage.getItem("favoBills");
+            var favoComms=localStorage.getItem("favoComms");
+            (function(){
+            if(favoLegis!=null && favoLegis!=""){
+                $scope.allFavoLegis=JSON.parse(favoLegis);
+            }
+            if(favoBills!=null && favoBills!=""){
+                $scope.allFavoBills=JSON.parse(favoBills);
+            }
+            if(favoComms!=null && favoComms!=""){
+                $scope.allFavoComms=JSON.parse(favoComms);
+            }
+            })();
+            all_legi_favo=$scope.allFavoLegis; 
+            $scope.writeLocalStorage=function(){
+                var legisForWrite=JSON.stringify($scope.allFavoLegis,null,4);
+                var billsForWrite=JSON.stringify($scope.allFavoBills,null,4);
+                var commsForWrite=JSON.stringify($scope.allFavoComms,null,4);
+                if($scope.allFavoLegis.length==0)legisForWrite="";
+                if($scope.allFavoBills.length==0)billsForWrite="";
+                if($scope.allFavoComms.length==0)commsForWrite="";
+                localStorage.setItem("favoLegis",legisForWrite);
+                localStorage.setItem("favoBills",billsForWrite);
+                localStorage.setItem("favoComms",commsForWrite);
+            }
+            $scope.addLegi=function(legi){
+                $scope.allFavoLegis.push(legi);
+                $scope.writeLocalStorage();
+            }
+            $scope.removeLegi=function(legi){
+                if(legi==null)return;
+                for(i=0;i<$scope.allFavoLegis.length;i++){
+                    if($scope.allFavoLegis[i].bioguide_id==legi.bioguide_id){
+                        $scope.allFavoLegis.splice(i,1);
+                        $scope.writeLocalStorage();
+                        return;
+                    }
+                }
+            }
+            $scope.removeBill=function(legi){
+                if(legi==null)return;
+                for(i=0;i<$scope.allFavoBills.length;i++){
+                    if($scope.allFavoBills[i].bill_id==legi.bill_id){
+                        $scope.allFavoBills.splice(i,1);
+                        $scope.writeLocalStorage();
+                        return;
+                    }
+                }
+            }
+            $scope.removeComm=function(legi){
+                if(legi==null)return;
+                for(i=0;i<$scope.allFavoComms.length;i++){
+                    if($scope.allFavoComms[i].committee_id==legi.committee_id){
+                        $scope.allFavoComms.splice(i,1);
+                        $scope.writeLocalStorage();
+                        return;
+                    }
+                }
+            }
+            $scope.hasComm=function(legi){
+                if(legi==null)return false;
+                for(i=0;i<$scope.allFavoComms.length;i++){
+                    if($scope.allFavoComms[i].committee_id==legi.committee_id){
+                        return true;
+                    }
+                }
+                return false;
+            }
+            $scope.hasBill=function(legi){
+                if(legi==null)return false;
+                for(i=0;i<$scope.allFavoBills.length;i++){
+                    if($scope.allFavoBills[i].bill_id==legi.bill_id){
+                        return true;
+                    }
+                }
+                return false;
+            }
+            $scope.hasLegi=function(legi){
+                if(legi==null)return false;
+                for(i=0;i<$scope.allFavoLegis.length;i++){
+                    if($scope.allFavoLegis[i].bioguide_id==legi.bioguide_id){
+                        return true;
+                    }
+                }
+                return false;
+            }
+            $scope.addBill=function(legi){
+                $scope.allFavoBills.push(legi);
+                $scope.writeLocalStorage();
+            }
+            $scope.addComm=function(legi){
+                $scope.allFavoComms.push(legi);
+                $scope.writeLocalStorage();
+            }
+            $scope.delFavoComm=function(comm){
+                $scope.removeComm(comm);
+            }
+            $scope.delFavoLegi=function(comm){
+                $scope.removeLegi(comm);
+            }
+            $scope.delFavoBill=function(comm){
+                $scope.removeBill(comm);
+            }
+        }
+        //add favo legi
+        function addFavoLegi(legiDetail){
+            $("#favo_controller").scope().addLegi(legiDetail);
+        }
+       
+        
+        
+        
+        congressApp.controller('LegiController',LegiController);
+        congressApp.controller('BillController',BillController);
+        congressApp.controller('CommController',CommController);
+        congressApp.controller('FavoController',FavoController);
+        congressApp.controller('LegiDetailsController',LegiDetailsController);
+        congressApp.controller('BillDetailsController',BillDetailsController);
+        congressApp.controller('LegiDetailsController_favo',LegiDetailsController_favo);
+        congressApp.controller('BillDetailsController_favo',BillDetailsController_favo);
+        //for sidebar's tag
+        $(function(){$('#navTab a:last').tab("show");})
+        $(function(){$('#navTab a:first').tab("show");});
+        //for first page's tag
+        $(function(){$('#legi_navTab a:last').tab("show");})
+        $(function(){$('#legi_navTab a:first').tab("show");});
+        //for second page's tag
+        $(function(){$('#bill_navTab a:last').tab("show");})
+        $(function(){$('#bill_navTab a:first').tab("show");});
+        //for third page's tag
+        $(function(){$('#comm_navTab a:last').tab("show");})
+        $(function(){$('#comm_navTab a:first').tab("show");});
+        //for fouth page's tag
+        $(function(){$('#favo_navTab a:last').tab("show");})
+        $(function(){$('#favo_navTab a:first').tab("show");});
+    </script>
+</body>
+</html>
